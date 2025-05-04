@@ -20,6 +20,18 @@ class dashBoardFailure extends dashBoardState {
   dashBoardFailure(this.error);
 }
 
+class deleteCarLoading extends dashBoardState {}
+
+class deleteCarSuccess extends dashBoardState {
+  final String massege;
+  deleteCarSuccess(this.massege);
+}
+
+class deleteCarFailure extends dashBoardState {
+  final String error;
+  deleteCarFailure(this.error);
+}
+
 class carTrackerLoading extends dashBoardState {}
 
 

@@ -14,30 +14,34 @@ class branchPage extends StatefulWidget {
 }
 
 class _branchPageState extends State<branchPage> {
-  List<BranchModel> branchList=[];
+  List<BranchModel> branchList = [];
 
-  List<BranchModel> cityList=[];
+  List<BranchModel> cityList = [];
 
   @override
   void initState() {
     super.initState();
     branchList = BlocProvider.of<settingCubit>(context).getBranches();
-
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: BlocConsumer<settingCubit,settingState>(
-          listener: (context,state){
-if(state is GetBranchesSuccess){
-  branchList=state.model;
-} if (state is addBranchSuccess){
-  BlocProvider.of<settingCubit>(context).getBranches();
-}
+        body: BlocConsumer<settingCubit, settingState>(
+          listener: (context, state) {
+            if (state is GetBranchesSuccess) {
+              branchList = state.model;
+            }
+            if (state is addBranchSuccess) {
+              BlocProvider.of<settingCubit>(context).getBranches();
+            }
+            if (state is deleteBranchSuccess) {
+              BlocProvider.of<settingCubit>(context).getBranches();
+            }
           },
-          builder: (context,state){
+          builder: (context, state) {
             return Stack(
               children: [
                 // الجزء العلوي (خلفية أو عناصر أخرى)
@@ -127,7 +131,9 @@ if(state is GetBranchesSuccess){
                                 separatorBuilder: (context, index) =>
                                     SizedBox(height: 24),
                                 itemBuilder: (context, index) {
-                                  return branchCardWidget(Model: branchList[index],);
+                                  return branchCardWidget(
+                                    Model: branchList[index],
+                                  );
                                 },
                               ),
                             ),

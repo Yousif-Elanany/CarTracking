@@ -1,17 +1,27 @@
+import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
 import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class cityCardWidget extends StatelessWidget {
+class cityCardWidget extends StatefulWidget {
   // final Map<String, dynamic> carData;
   CityModel? model;
 
    cityCardWidget({this.model}) ;
 
   @override
+  State<cityCardWidget> createState() => _cityCardWidgetState();
+}
+
+class _cityCardWidgetState extends State<cityCardWidget> {
+
+  @override
   Widget build(BuildContext context) {
+    final settingsCubit = BlocProvider.of<settingCubit>(context);
+
     return Container(
       width: double.infinity,
       //height: 100,
@@ -42,7 +52,7 @@ class cityCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'City: '),
                   TextSpan(
-                    text: model?.cityName ?? "",
+                    text: widget.model?.cityName ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -64,7 +74,7 @@ class cityCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'City Code: '),
                   TextSpan(
-                    text: model?.cityCode ?? "",
+                    text: widget.model?.cityCode ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -89,7 +99,10 @@ class cityCardWidget extends StatelessWidget {
 
                     btnTextColor: Colors.red,
                     ontap: () {
-                      CustomBottomSheet(context);
+                      CustomBottomSheet(context ,onTap: ()async{
+                        await settingsCubit.deleteCity(widget.model!.id);
+                        Navigator.pop(context);
+                      });
                     },
                   ),
                 ),
@@ -102,7 +115,10 @@ class cityCardWidget extends StatelessWidget {
                     btnheight: 35,
                     iconColor: Colors.blue,
                     btnTextColor: Colors.blue,
-                    ontap: () {},
+                    ontap: () {
+
+
+                    },
                   ),
                 ),
               ],
@@ -110,6 +126,7 @@ class cityCardWidget extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
 }

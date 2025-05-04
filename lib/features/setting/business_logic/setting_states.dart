@@ -1,5 +1,6 @@
 import 'package:car_tracking/features/auth/data/Models/userModel.dart';
 import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
+import 'package:car_tracking/features/setting/data/Models/carModel.dart';
 import 'package:car_tracking/features/setting/data/Models/carStatus.dart';
 import 'package:car_tracking/features/setting/data/Models/carTypeModel.dart';
 import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
@@ -152,4 +153,112 @@ class AddRegionSuccess extends settingState {
 class AddRegionFailure extends settingState {
   final String error;
   AddRegionFailure(this.error);
+}
+
+class GetCarsLoading extends settingState {}
+
+class GetCarsSuccess extends settingState {
+  final List<CarModel> model;
+  GetCarsSuccess(this.model);
+}
+
+class GetCarsFailure extends settingState {
+  final String error;
+  GetCarsFailure(this.error);
+}
+
+class AddCarLoading extends settingState {}
+
+class AddCarSuccess extends settingState {
+  final String massege;
+  AddCarSuccess(this.massege);
+}
+
+class AddCarFailure extends settingState {
+  final String error;
+  AddCarFailure(this.error);
+}
+
+// class deleteCarLoading extends settingState {}
+//
+// class deleteCarSuccess extends settingState {
+//   final String massege;
+//   deleteCarSuccess(this.massege);
+// }
+//
+// class deleteCarFailure extends settingState {
+//   final String error;
+//   deleteCarFailure(this.error);
+// }
+
+class deleteRegionLoading extends settingState {}
+
+class deleteRegionSuccess extends settingState {
+  final String massege;
+  deleteRegionSuccess(this.massege);
+}
+
+class deleteRegionFailure extends settingState {
+  final String error;
+  deleteRegionFailure(this.error);
+}
+
+class deleteCityLoading extends settingState {}
+
+class deleteCitySuccess extends settingState {
+  final String massege;
+  deleteCitySuccess(this.massege);
+}
+
+class deleteCityFailure extends settingState {
+  final String error;
+  deleteCityFailure(this.error);
+}
+
+class deleteStatusLoading extends settingState {}
+
+class deleteStatusSuccess extends settingState {
+  final String massege;
+  deleteStatusSuccess(this.massege);
+}
+
+class deleteStatusFailure extends settingState {
+  final String error;
+  deleteStatusFailure(this.error);
+}
+
+class deleteTypeLoading extends settingState {}
+
+class deleteTypeSuccess extends settingState {
+  final String massege;
+  deleteTypeSuccess(this.massege);
+}
+
+class deleteTypeFailure extends settingState {
+  final String error;
+  deleteTypeFailure(this.error);
+}
+
+class deleteBranchLoading extends settingState {}
+
+class deleteBranchSuccess extends settingState {
+  final String massege;
+  deleteBranchSuccess(this.massege);
+}
+
+class deleteBranchFailure extends settingState {
+  final String error;
+  deleteBranchFailure(this.error);
+}
+
+class deleteUserLoading extends settingState {}
+
+class deleteUserSuccess extends settingState {
+  final String massege;
+  deleteUserSuccess(this.massege);
+}
+
+class deleteUserFailure extends settingState {
+  final String error;
+  deleteUserFailure(this.error);
 }

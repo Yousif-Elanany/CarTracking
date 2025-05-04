@@ -2,13 +2,15 @@ import 'package:car_tracking/features/setting/data/Models/carStatus.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class CarStatusCardWidget extends StatelessWidget {
- // final Map<String, dynamic> carData;
-  CarStatusModel? Model;
-   CarStatusCardWidget({this.Model});
+import '../business_logic/setting_cubit.dart';
 
+class CarStatusCardWidget extends StatelessWidget {
+  // final Map<String, dynamic> carData;
+  CarStatusModel? Model;
+  CarStatusCardWidget({this.Model});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class CarStatusCardWidget extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 1,
-           // blurRadius: 5,
+            // blurRadius: 5,
             //offset: Offset(0, 3),
           ),
         ],
@@ -32,9 +34,6 @@ class CarStatusCardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-
-
             RichText(
               text: TextSpan(
                 style: TextStyle(
@@ -45,7 +44,7 @@ class CarStatusCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'Status name: '),
                   TextSpan(
-                    text: Model?.carStatusName.toString() ??"",
+                    text: Model?.carStatusName.toString() ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -60,36 +59,33 @@ class CarStatusCardWidget extends StatelessWidget {
             // زر View
             Row(
               children: [
-
                 Expanded(
-
                   child: customSelectButton(
                     btnText: "Delete",
                     borderColor: Colors.red,
                     behindIcon: Icons.delete_outline,
                     btnheight: 40,
-
                     iconColor: Colors.red,
                     btnTextColor: Colors.red,
-                    ontap: (){
-                      CustomBottomSheet(context);
-
-
+                    ontap: () {
+                      CustomBottomSheet(context, onTap: () async {
+                        await BlocProvider.of<settingCubit>(context)
+                            .deleteStatus(Model!.id);
+                        Navigator.pop(context);
+                      });
                     },
                   ),
                 ),
                 SizedBox(width: 12),
-
                 Expanded(
                   child: customSelectButton(
                     btnText: "edit",
                     borderColor: Colors.blue,
                     behindIcon: Icons.edit,
                     btnheight: 40,
-
                     iconColor: Colors.blue,
                     btnTextColor: Colors.blue,
-                    ontap: (){},
+                    ontap: () {},
                   ),
                 ),
               ],

@@ -108,13 +108,23 @@ final GoRouter appRouter = GoRouter(
             ),
           );
         }),
+
+
     GoRoute(
       path: '/carTracker',
-      builder: (context, state) => carTrackerScreenPage(),
+      builder: (context, state) => BlocProvider(
+          create: (_) => dashBoardCubit(DashboardRepository(
+            dashBoardApiService(),
+              )),
+          child: carTrackerScreenPage()),
     ),
     GoRoute(
       path: '/addCar',
-      builder: (context, state) => addCarPage(),
+      builder: (context, state) => BlocProvider(
+          create: (_) => settingCubit(SettingRepository(
+                SettingsApiService(),
+              )),
+          child: addCarPage()),
     ),
     GoRoute(
       path: '/carStatusPage',

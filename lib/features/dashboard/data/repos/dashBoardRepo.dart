@@ -27,4 +27,15 @@ class DashboardRepository {
       rethrow;
     }
   }
+
+  Future<String> deleteCar(
+      String carId,
+      ) async {
+    try {
+      final data = await apiService.deleteCar(carId);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

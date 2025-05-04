@@ -25,65 +25,73 @@ class _userPermissionState extends State<userPermission> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.all(12),
-        child: Column(
-          children: [
-            User_ActivationSwitch(
-              rightText: 'Admin',
-              isActivated: isAdmin,
-              isEnabled: !(isUser || isEditor),
-              onChanged: (value) {
-                setState(() {
-                  isAdmin = value;
-                  if (value) {
-                    isUser = false;
-                    isEditor = false;
-                  }
-                });
-              },
-            ),
-            SizedBox(height: 10),
-            User_ActivationSwitch(
-              rightText: 'Branch controller',
-              isActivated: isUser,
-              isEnabled: !isAdmin,
-              onChanged: (value) {
-                setState(() {
-                  isUser = value;
-                  if (value) isAdmin = false;
-                });
-              },
-            ),
-            SizedBox(height: 10),
-            User_ActivationSwitch(
-              rightText: 'Car controller',
-              isActivated: isEditor,
-              isEnabled: !isAdmin,
-              onChanged: (value) {
-                setState(() {
-                  isEditor = value;
-                  if (value) isAdmin = false;
-                });
-              },
-            ),
-            SizedBox(height: 10),
-            // CustomDropdown(
-            //   hint: 'City',
-            //   value: selectedCity,
-            //   items: cities,
-            //   onChanged: (val) => setState(() => selectedCity = val),
-            // ),
-            SizedBox(height: 10),
-            // CustomDropdown(
-            //   hint: 'Branches',
-            //   value: selectedBranch,
-            //   items: branches,
-            //   onChanged: (val) => setState(() => selectedBranch = val),
-            // ),
-          ],
+        padding: const EdgeInsets.all(12),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              User_ActivationSwitch(
+                rightText: 'Admin',
+                isActivated: isAdmin,
+                isEnabled: !(isUser || isEditor),
+                onChanged: (value) {
+                  setState(() {
+                    isAdmin = value;
+                    if (value) {
+                      isUser = false;
+                      isEditor = false;
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              User_ActivationSwitch(
+                rightText: 'Branch controller',
+                isActivated: isUser,
+                isEnabled: !isAdmin,
+                onChanged: (value) {
+                  setState(() {
+                    isUser = value;
+                    if (value) isAdmin = false;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              User_ActivationSwitch(
+                rightText: 'Car controller',
+                isActivated: isEditor,
+                isEnabled: !isAdmin,
+                onChanged: (value) {
+                  setState(() {
+                    isEditor = value;
+                    if (value) isAdmin = false;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              isAdmin != true  ?       CustomDropdown(
+                hint: 'City',
+                value: selectedCity,
+                items: cities,
+                itemAsString: (e){
+                  return "";
+                },
+                onChanged: (val) => setState(() => selectedCity = val),
+              ):SizedBox(),
+              const SizedBox(height: 10),
+              isAdmin !=true ?         CustomDropdown(
+                hint: 'Branch',
+                value: selectedBranch,
+                items: branches,
+                itemAsString: (e){
+                  return "";
+                },
+                onChanged: (val) => setState(() => selectedBranch = val ,),
+              ):SizedBox(),
+
+            ],
+          ),
         ),
       ),
     );
   }
-
 }

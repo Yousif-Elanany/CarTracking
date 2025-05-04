@@ -1,7 +1,9 @@
+import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
 import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class branchCardWidget extends StatelessWidget {
@@ -87,10 +89,14 @@ BranchModel? Model;
                     btnheight: 35,
                     btnTextColor: Colors.red,
                     ontap: () {
-                      CustomBottomSheet(context);
+                      CustomBottomSheet(context,onTap:()async{
+                      await  BlocProvider.of<settingCubit>(context).deleteBranch(Model!.id);
+Navigator.pop(context);
+                      } );
                     },
                   ),
                 ),
+                SizedBox(width: MediaQuery.sizeOf(context).width*0.03,),
                 Expanded(
                   child: customSelectButton(
                     btnText: "edit",

@@ -36,4 +36,15 @@ class dashBoardCubit extends Cubit<dashBoardState> {
     }
     return carTrackerList;
   }
+
+  deleteCar(String carId) {
+    emit(deleteCarLoading());
+    try {
+      dashboardrepository.deleteCar(carId).then((cars) {
+        emit(deleteCarSuccess(cars));
+      });
+    } catch (e) {
+      emit(deleteCarFailure(e.toString()));
+    }
+  }
 }

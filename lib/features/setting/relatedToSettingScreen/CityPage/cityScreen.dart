@@ -37,6 +37,10 @@ class _cityPageState extends State<cityPage> {
             if(state is addCitySuccess){
               BlocProvider.of<settingCubit>(context).getCities();
             }
+            if(state is deleteCitySuccess){
+              BlocProvider.of<settingCubit>(context).getCities();
+
+            }
           },
           builder: (context,state){
             return Stack(

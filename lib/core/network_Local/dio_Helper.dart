@@ -6,12 +6,12 @@ class DioHelper {
   static init() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'http://mobilecartracking.uat.toq.sa/api/', // غير ده حسب الـ API بتاعك
+        baseUrl: 'http://mobilecartracking.uat.toq.sa/api/',
         receiveDataWhenStatusError: true,
         connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 50),
         headers: {
-          'Content-Type': 'application/json',
+          // احذف Content-Type هنا
           'Accept': 'application/json',
         },
       ),
@@ -64,12 +64,14 @@ class DioHelper {
 
   static Future<Response> delete(
       String url, {
+        Map<String, dynamic>? query,
         Map<String, dynamic>? data,
         Map<String, dynamic>? headers,
       }) async {
     return await _dio.delete(
       url,
       data: data,
+      queryParameters: query,
       options: Options(headers: headers),
     );
   }

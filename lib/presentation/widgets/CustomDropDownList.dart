@@ -19,16 +19,20 @@ class CustomDropdown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
+
       child: DropdownButtonFormField<T>(
+
         value: value,
         decoration: InputDecoration(
+
+
           hintText: hint,
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(borderRadius:BorderRadius.all(Radius.circular(12.0)) ),
         ),
         items: items
             .map((item) => DropdownMenuItem<T>(
           value: item,
-          child: Text(itemAsString(item)),
+          child: Text(itemAsString(item),style: TextStyle(color: Colors.black),),
         ))
             .toList(),
         onChanged: onChanged,

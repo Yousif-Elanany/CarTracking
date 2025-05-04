@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:car_tracking/features/auth/data/Models/userModel.dart';
 import 'package:car_tracking/features/setting/business_logic/setting_states.dart';
 import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
+import 'package:car_tracking/features/setting/data/Models/carModel.dart';
 import 'package:car_tracking/features/setting/data/Models/carStatus.dart';
 import 'package:car_tracking/features/setting/data/Models/carTypeModel.dart';
 import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
@@ -15,13 +16,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class settingCubit extends Cubit<settingState> {
   final SettingRepository settingrepository;
 
+  String? userName;
+  String? email;
+  String? phoneNumber;
+  String? password;
+  bool isActive = true;
+
+  // بيانات الصلاحيات
+  bool isAdmin = false;
+  bool isUser = false;
+  bool isEditor = false;
+  String? selectedCity;
+  String? selectedBranch;
+
   List<CarTypeModel> carTypeList = [];
   List<CarStatusModel> carStatusList = [];
   List<BranchModel> branchesList = [];
   List<CityModel> citiesList = [];
   List<RegionModel> regionsList = [];
   List<UsersModel> usersList = [];
-
+  List<CarModel> carsList = [];
   settingCubit(this.settingrepository) : super(settingInitial());
 
   List<CarTypeModel> getCarTypes() {
@@ -101,7 +115,9 @@ class settingCubit extends Cubit<settingState> {
     try {
       settingrepository.getBranches().then((cars) {
         emit(GetBranchesSuccess(cars));
+
         getCities();
+
         branchesList = cars;
       });
     } catch (e) {
@@ -151,12 +167,28 @@ class settingCubit extends Cubit<settingState> {
     try {
       settingrepository.getUsers().then((cars) {
         emit(GetUsersSuccess(cars));
-        getCities();
+        getCars();
         getBranches();
+        getCarTypes();
+        getCarStatus();
         usersList = cars;
       });
     } catch (e) {
       emit(GetUsersFailure(e.toString()));
+    }
+    return usersList;
+  }
+
+  List<UsersModel> getCars() {
+    emit(GetCarsLoading());
+    try {
+      settingrepository.getCars().then((cars) {
+        emit(GetCarsSuccess(cars));
+
+        carsList = cars;
+      });
+    } catch (e) {
+      emit(GetCarsFailure(e.toString()));
     }
     return usersList;
   }
@@ -189,20 +221,119 @@ class settingCubit extends Cubit<settingState> {
     String phoneNumber,
     bool isActive,
     String password,
-    String carId,
-    String branchId,
+    List<String> roles,
+    List<Map<String, String>> carList,
+    List<Map<String, String>> branchList,
   ) {
     emit(AddUserLoading());
     try {
       settingrepository
-          .adduser(
-              userName, email, phoneNumber, isActive, password, carId, branchId)
+          .adduser(userName, email, phoneNumber, isActive, password, roles,
+              carList, branchList)
           .then((cars) {
         emit(AddUserSuccess(cars));
         getCities();
       });
     } catch (e) {
       emit(AddUserFailure(e.toString()));
+    }
+  }
+
+  addCar(String carName, String carPlate, String carTypeId, carBranchId,
+      String carStatusId, String note) {
+    emit(AddCarLoading());
+    try {
+      settingrepository
+          .addCar(carName, carPlate, carTypeId, carBranchId, carStatusId, note)
+          .then((cars) {
+        emit(AddCarSuccess(cars));
+        getCars();
+      });
+    } catch (e) {
+      emit(AddCarFailure(e.toString()));
+    }
+  }
+
+  ///////////all deletes ///////
+  deleteCity(String cityId) {
+    emit(deleteCityLoading());
+    try {
+      settingrepository.deleteCity(cityId).then((cars) {
+        emit(deleteCitySuccess(cars));
+      });
+    } catch (e) {
+      emit(deleteCityFailure(e.toString()));
+    }
+  }
+
+  deleteStatus(String carStatusId) {
+    emit(deleteStatusLoading());
+    try {
+      settingrepository.deleteStatus(carStatusId).then((cars) {
+        emit(deleteStatusSuccess(cars));
+      });
+    } catch (e) {
+      emit(deleteStatusFailure(e.toString()));
+    }
+  }
+
+  deleteRegion(String regionId) {
+    emit(deleteRegionLoading());
+    try {
+      settingrepository.deleteRegion(regionId).then((cars) {
+        emit(deleteRegionSuccess(cars));
+      });
+    } catch (e) {
+      emit(deleteRegionFailure(e.toString()));
+    }
+  }
+
+  deleteType(String carTypeId) {
+    emit(deleteTypeLoading());
+    try {
+      settingrepository.deleteType(carTypeId).then((cars) {
+        emit(deleteTypeSuccess(cars));
+        getCities();
+      });
+    } catch (e) {
+      emit(deleteTypeFailure(e.toString()));
+    }
+  }
+
+  deleteUser(String UserId) {
+    emit(deleteUserLoading());
+    try {
+      settingrepository.deleteUser(UserId).then((cars) {
+        emit(deleteUserSuccess(cars));
+        getCities();
+      });
+    } catch (e) {
+      emit(deleteUserFailure(e.toString()));
+    }
+  }
+
+  // deleteCar(String carId) {
+  //   emit(deleteCarLoading());
+  //   try {
+  //     settingrepository.deleteCar(carId).then((cars) {
+  //       emit(deleteCarSuccess(cars));
+  //       getCities();
+  //     });
+  //   } catch (e) {
+  //     emit(deleteCarFailure(e.toString()));
+  //   }
+  // }
+
+  deleteBranch(String branchId) {
+    emit(deleteBranchLoading());
+    try {
+      settingrepository.deleteBranch(branchId).then((cars) {
+        emit(deleteBranchSuccess(cars));
+        settingrepository.getBranches();
+        getCities();
+      });
+    } catch (e) {
+      emit(deleteBranchFailure(e.toString()));
     }
   }
 }

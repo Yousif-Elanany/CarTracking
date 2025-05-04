@@ -1,8 +1,10 @@
 import 'package:car_tracking/features/auth/data/Models/userModel.dart';
+import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
 import 'package:car_tracking/features/setting/data/Models/userModel.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class userCardWidget extends StatelessWidget {
@@ -161,28 +163,30 @@ class userCardWidget extends StatelessWidget {
                   btnTextColor: Colors.blue,
                   ontap: () {},
                 ),
-                SizedBox(height: MediaQuery.sizeOf(context).height*0.02),
+                SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
                 customSelectButton(
                   btnText: "ChangePassword",
                   borderColor: Colors.blue,
                   behindIcon: Icons.vpn_key_outlined,
                   iconColor: Colors.blue,
                   btnheight: 35,
-
                   btnTextColor: Colors.blue,
                   ontap: () {},
                 ),
-                SizedBox(height: MediaQuery.sizeOf(context).height*0.02),
+                SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
                 customSelectButton(
                   btnText: "Delete",
                   borderColor: Colors.red,
                   behindIcon: Icons.delete_outline,
                   btnheight: 35,
-
                   iconColor: Colors.red,
                   btnTextColor: Colors.red,
                   ontap: () {
-                    CustomBottomSheet(context);
+                    CustomBottomSheet(context, onTap: () async {
+                     await BlocProvider.of<settingCubit>(context)
+                          .deleteUser(Model!.id);
+                      Navigator.pop(context);
+                    });
                   },
                 ),
               ],

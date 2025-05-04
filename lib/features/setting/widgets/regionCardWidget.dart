@@ -2,7 +2,10 @@ import 'package:car_tracking/features/setting/data/Models/regionModel.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../business_logic/setting_cubit.dart';
 
 class regionCardWidget extends StatelessWidget {
   // final Map<String, dynamic> carData;
@@ -133,7 +136,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'Min Stay Count: '),
                   TextSpan(
-                    text: "${Model?.minStayCount??0}" ,
+                    text: "${Model?.minStayCount ?? 0}",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -200,13 +203,18 @@ class regionCardWidget extends StatelessWidget {
                     iconColor: Colors.red,
                     btnTextColor: Colors.red,
                     btnheight: 35,
-
                     ontap: () {
-                      CustomBottomSheet(context);
+                      CustomBottomSheet(context, onTap:()async{
+                       await BlocProvider.of<settingCubit>(context).deleteRegion(Model!.id);
+                       Navigator.pop(context);
+
+                      } );
                     },
                   ),
                 ),
-                SizedBox(width: MediaQuery.sizeOf(context).width*0.05,),
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width * 0.05,
+                ),
                 Expanded(
                   child: customSelectButton(
                     btnText: "edit",

@@ -36,6 +36,9 @@ class _usersPageState extends State<usersPage> {
             if (state is AddUserSuccess) {
               BlocProvider.of<settingCubit>(context).getUsers();
             }
+            if (state is deleteUserSuccess) {
+              BlocProvider.of<settingCubit>(context).getUsers();
+            }
           },
           builder: (context, state) {
             return Stack(
@@ -122,12 +125,14 @@ class _usersPageState extends State<usersPage> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.68,
                               child: ListView.separated(
-                                padding: EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(4),
                                 itemCount: UsersList.length,
                                 separatorBuilder: (context, index) =>
-                                    SizedBox(height: 24),
+                                   const SizedBox(height: 24),
                                 itemBuilder: (context, index) {
-                                  return userCardWidget(Model: UsersList[index],);
+                                  return userCardWidget(
+                                    Model: UsersList[index],
+                                  );
                                 },
                               ),
                             ),
@@ -135,7 +140,7 @@ class _usersPageState extends State<usersPage> {
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: CustomButton(
                                 backGroundColor: const Color(0xff167AD8),
-                                child: Text("+ Add User",
+                                child: const Text("+ Add User",
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 18)),
                                 onPressed: () async {

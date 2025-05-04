@@ -35,6 +35,9 @@ class _regionPageState extends State<regionPage> {
             if (state is AddRegionSuccess) {
               BlocProvider.of<settingCubit>(context).getRegions();
             }
+            if (state is deleteRegionSuccess) {
+              BlocProvider.of<settingCubit>(context).getRegions();
+            }
           },
           builder: (context, state) {
             return Stack(
@@ -126,7 +129,8 @@ class _regionPageState extends State<regionPage> {
                                 separatorBuilder: (context, index) =>
                                     SizedBox(height: 24),
                                 itemBuilder: (context, index) {
-                                  return regionCardWidget(Model:regionsList[index]);
+                                  return regionCardWidget(
+                                      Model: regionsList[index]);
                                 },
                               ),
                             ),

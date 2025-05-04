@@ -84,233 +84,230 @@ class _fleetManagementScreenState extends State<fleetManagementScreen> {
       builder: (context, state) => SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              // context.push('/cardetailsScreen');
-            },
-            icon: Image.asset(
-              'assets/images/map.png',
-              width: 24,
-              height: 24,
-            ),
-            label: Text(
-              'See on the map',
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Color(0xff09345D),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          body: Padding(
-            padding: const EdgeInsets.only(bottom: 50),
-            child: Stack(
-              children: [
-                // الجزء العلوي (خلفية أو عناصر أخرى)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image:
-                            AssetImage('assets/images/base.png'), // مسار الصورة
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                            top: 20,
-                            left: 16,
-                            right: 16,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: AssetImage(
-                                            'assets/images/person.png'), // غيّر المسار حسب صورتك
-                                      ),
-                                      SizedBox(width: 10),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Hello,',
-                                            style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Abobakr Sobhy',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.05),
-                                    border: Border.all(color: Colors.white10),
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  child: Icon(
-                                    Icons.notifications,
-                                    color: Colors.white,
-                                    size: 30,
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ],
+          // floatingActionButton: FloatingActionButton.extended(
+          //   onPressed: () {
+          //     // context.push('/cardetailsScreen');
+          //   },
+          //   icon: Image.asset(
+          //     'assets/images/map.png',
+          //     width: 24,
+          //     height: 24,
+          //   ),
+          //   label: Text(
+          //     'See on the map',
+          //     style: TextStyle(color: Colors.white),
+          //   ),
+          //   backgroundColor: Color(0xff09345D),
+          // ),
+          // floatingActionButtonLocation:
+          //     FloatingActionButtonLocation.centerFloat,
+          body: Stack(
+            children: [
+              // الجزء العلوي (خلفية أو عناصر أخرى)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image:
+                          AssetImage('assets/images/base.png'), // مسار الصورة
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-
-                // الجزء السفلي مع البيانات
-                Positioned(
-                  top: 140,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffF5F5F5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: TextFormField(
-                                    controller: searchText,
-
-                                    onChanged: filterCars,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      hintText: "بحث",
-                                      hintStyle: TextStyle(color: Colors.grey),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(24),
-                                        borderSide: BorderSide(
-                                          color: Color(0xff6C6C89)
-                                              .withOpacity(0.3),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(
-                                          color: Color(0xff6C6C89)
-                                              .withOpacity(0.3),
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(
-                                          color: Color(0xff6C6C89)
-                                              .withOpacity(0.3),
-                                        ),
-                                      ),
-                                      suffixIcon: GestureDetector(
-                                        onTap: () async {},
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Image.asset(
-                                            'assets/images/filtter.png',
-                                            width: 15,
-                                            height: 15,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                          top: 20,
+                          left: 16,
+                          right: 16,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/person.png'), // غيّر المسار حسب صورتك
+                                    ),
+                                    SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Hello,',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 16,
                                           ),
                                         ),
+                                        Text(
+                                          'Abobakr Sobhy',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.05),
+                                  border: Border.all(color: Colors.white10),
+                                ),
+                                padding: EdgeInsets.all(10),
+                                child: Icon(
+                                  Icons.notifications,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+
+              // الجزء السفلي مع البيانات
+              Positioned(
+                top: 140,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xffF5F5F5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 5,
+                                child: TextFormField(
+                                  controller: searchText,
+
+                                  onChanged: filterCars,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    hintText: "بحث",
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(24),
+                                      borderSide: BorderSide(
+                                        color: Color(0xff6C6C89)
+                                            .withOpacity(0.3),
                                       ),
-                                      prefixIcon: Padding(
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(
+                                        color: Color(0xff6C6C89)
+                                            .withOpacity(0.3),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(
+                                        color: Color(0xff6C6C89)
+                                            .withOpacity(0.3),
+                                      ),
+                                    ),
+                                    suffixIcon: GestureDetector(
+                                      onTap: () async {},
+                                      child: Padding(
                                         padding: const EdgeInsets.all(6.0),
                                         child: Image.asset(
-                                          'assets/images/search.png',
+                                          'assets/images/filtter.png',
                                           width: 15,
                                           height: 15,
                                         ),
                                       ),
                                     ),
+                                    prefixIcon: Padding(
+                                      padding: const EdgeInsets.all(6.0),
+                                      child: Image.asset(
+                                        'assets/images/search.png',
+                                        width: 15,
+                                        height: 15,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                // Padding(
-                                //   padding:
-                                //       const EdgeInsets.symmetric(horizontal: 4.0),
-                                //   child: Container(
-                                //     height: 56,
-                                //     width: 56,
-                                //     decoration: BoxDecoration(
-                                //       color: Colors.grey.withOpacity(0.1),
-                                //       borderRadius: BorderRadius.circular(12),
-                                //     ),
-                                //     child: Image.asset("assets/images/dots.png"),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                            SizedBox(height: 24),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.52,
-                              child: Skeletonizer(
-                                enabled: !carLoaded,
-                                child: ListView.separated(
-                                  padding: EdgeInsets.all(4),
-                                  itemCount: searchText.text.isEmpty
+                              ),
+                              // Padding(
+                              //   padding:
+                              //       const EdgeInsets.symmetric(horizontal: 4.0),
+                              //   child: Container(
+                              //     height: 56,
+                              //     width: 56,
+                              //     decoration: BoxDecoration(
+                              //       color: Colors.grey.withOpacity(0.1),
+                              //       borderRadius: BorderRadius.circular(12),
+                              //     ),
+                              //     child: Image.asset("assets/images/dots.png"),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                          SizedBox(height: 24),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Skeletonizer(
+                              enabled: !carLoaded,
+                              child: ListView.separated(
+                                padding: EdgeInsets.all(4),
+                                itemCount: searchText.text.isEmpty
+                                    ? BlocProvider.of<fleetManagmentCubit>(
+                                            context)
+                                        .carTrackerList
+                                        .length
+                                    : filteredCars.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(height: 24),
+                                itemBuilder: (context, index) {
+                                  final listcar = searchText.text.isEmpty
                                       ? BlocProvider.of<fleetManagmentCubit>(
                                               context)
-                                          .carTrackerList
-                                          .length
-                                      : filteredCars.length,
-                                  separatorBuilder: (context, index) =>
-                                      SizedBox(height: 24),
-                                  itemBuilder: (context, index) {
-                                    final listcar = searchText.text.isEmpty
-                                        ? BlocProvider.of<fleetManagmentCubit>(
-                                                context)
-                                            .carTrackerList[index]
-                                        : filteredCars[index];
-                                    return CarCardWidget(carData: listcar);
-                                  },
-                                ),
+                                          .carTrackerList[index]
+                                      : filteredCars[index];
+                                  return CarCardWidget(carData: listcar);
+                                },
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -34,6 +34,12 @@ class _carStatusPageState extends State<carStatusPage> {
             } else if (state is carStatusLoading) {
               Center(child: CircularProgressIndicator());
             }
+            if (state is addCarStatusSuccess) {
+              BlocProvider.of<settingCubit>(context).getCarStatus();
+            }
+            if (state is deleteStatusSuccess) {
+              BlocProvider.of<settingCubit>(context).getCarStatus();
+            }
           },
           builder: (context, state) {
             return Stack(

@@ -96,9 +96,6 @@ void CustomAddStatusBottomSheet(BuildContext context) {
                                             .addCarStatus(
                                                 StatusController.text);
                                         StatusController.clear();
-                                        await BlocProvider.of<settingCubit>(
-                                                context)
-                                            .getCarStatus();
                                         Navigator.pop(
                                             context); // يقفل الشييت بعد الفلترة
                                       } else {
