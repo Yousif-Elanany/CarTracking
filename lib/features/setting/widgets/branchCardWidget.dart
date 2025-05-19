@@ -1,16 +1,22 @@
 import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
 import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
+import 'package:car_tracking/features/setting/widgets/customAddBranchBottomheet.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class branchCardWidget extends StatelessWidget {
+class branchCardWidget extends StatefulWidget {
   // final Map<String, dynamic> carData;
-BranchModel? Model;
-   branchCardWidget({this.Model});
+  BranchModel? Model;
+  branchCardWidget({this.Model});
 
+  @override
+  State<branchCardWidget> createState() => _branchCardWidgetState();
+}
+
+class _branchCardWidgetState extends State<branchCardWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +49,7 @@ BranchModel? Model;
                 children: [
                   TextSpan(text: 'Branch: '),
                   TextSpan(
-                    text: Model?.branchName ??"",
+                    text: widget.Model?.branchName ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -65,7 +71,7 @@ BranchModel? Model;
                 children: [
                   TextSpan(text: 'City: '),
                   TextSpan(
-                    text: Model?.cityName ??"",
+                    text: widget.Model?.cityName ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -89,24 +95,28 @@ BranchModel? Model;
                     btnheight: 35,
                     btnTextColor: Colors.red,
                     ontap: () {
-                      CustomBottomSheet(context,onTap:()async{
-                      await  BlocProvider.of<settingCubit>(context).deleteBranch(Model!.id);
-Navigator.pop(context);
-                      } );
+                      CustomBottomSheet(context, onTap: () async {
+                        await BlocProvider.of<settingCubit>(context)
+                            .deleteBranch(widget.Model!.id);
+                        Navigator.pop(context);
+                      });
                     },
                   ),
                 ),
-                SizedBox(width: MediaQuery.sizeOf(context).width*0.03,),
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width * 0.03,
+                ),
                 Expanded(
                   child: customSelectButton(
                     btnText: "edit",
                     borderColor: Colors.blue,
                     behindIcon: Icons.edit,
                     btnheight: 35,
-
                     iconColor: Colors.blue,
                     btnTextColor: Colors.blue,
-                    ontap: () {},
+                    ontap: () {
+                      CustomAddBranchBottomSheet(context, branch: widget.Model);
+                    },
                   ),
                 ),
               ],

@@ -262,3 +262,15 @@ class deleteUserFailure extends settingState {
   final String error;
   deleteUserFailure(this.error);
 }
+
+class EditBranchLoading extends settingState {}
+
+class EditBranchSuccess extends settingState {
+  final String massege;
+  EditBranchSuccess(this.massege);
+}
+
+class EditBranchFailure extends settingState {
+  final String error;
+  EditBranchFailure(this.error);
+}

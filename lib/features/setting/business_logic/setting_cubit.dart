@@ -75,7 +75,7 @@ class settingCubit extends Cubit<settingState> {
     }
   }
 
-  addCarType(String statusName, File? imageFile) {
+  Future<String>? addCarType(String statusName, File? imageFile) {
     emit(addCarTypeLoading());
     try {
       settingrepository.addCarType(statusName, imageFile).then((cars) {
@@ -334,6 +334,37 @@ class settingCubit extends Cubit<settingState> {
       });
     } catch (e) {
       emit(deleteBranchFailure(e.toString()));
+    }
+  }
+
+  Future<String>? editBranch(
+    String branchId,
+    String branchName,
+    int allowedSpace,
+    double lat,
+    double long,
+    String nameOFLocation,
+    String cityId,
+  ) {
+    emit(EditBranchLoading());
+    try {
+      settingrepository
+          .editBranch(
+        branchId,
+        branchName,
+        allowedSpace,
+        lat,
+        long,
+        nameOFLocation,
+        cityId,
+      )
+          .then((branch) {
+        emit(EditBranchSuccess(branch));
+        settingrepository.getBranches();
+
+      });
+    } catch (e) {
+      emit(EditBranchFailure(e.toString()));
     }
   }
 }

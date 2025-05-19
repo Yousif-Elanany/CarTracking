@@ -9,6 +9,8 @@ import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
 import 'package:car_tracking/features/setting/data/Models/regionModel.dart';
 import 'package:car_tracking/features/setting/data/Models/userModel.dart';
 import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
 class SettingsApiService {
   // Future<Map<String, dynamic>> getStatiscs() async {
@@ -129,60 +131,88 @@ class SettingsApiService {
   //   }
   // }
 
-  Future<String> addCarType(String statusName, File imageFile) async {
+  Future<dynamic> addCarType2(String statusName, File? imageFile) async {
+    // التحقق من أن قيمة statusName ليست فارغة أو null
+    if (statusName.isEmpty || statusName == null) {
+      throw Exception('CarType_Name is required and cannot be empty');
+    }
+
+    // التحقق من أن الملف ليس null
+    if (imageFile == null || !await imageFile.exists()) {
+      throw Exception(
+          'Image file is required and cannot be null or non-existent');
+    }
+
+    var headers = {
+      'Authorization':
+          'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NjQ1MDl9.EZAbLTCraQiDDHZOINro6trS1VCN4f4oow7QKqzHnuo'
+    };
+
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'http://mobilecartracking.uat.toq.sa/api/CarType/Add-CarType'));
+
+    // إضافة الحقول
+    request.fields.addAll({'CarType_Name': statusName});
+
+    // إضافة الصورة باستخدام مسار الملف
+    request.files
+        .add(await http.MultipartFile.fromPath('CarType_Img', imageFile.path));
+
+    // إضافة الهيدر
+    request.headers.addAll(headers);
+
+    // إرسال الطلب
+    http.StreamedResponse response = await request.send();
+
+    // معالجة الاستجابة
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+
+    return response;
+  }
+
+  Future<dynamic> addCarType(String statusName, File imageFile) async {
+    // التحقق من أن الملف هو صورة
+    if (imageFile == null || !imageFile.existsSync()) {
+      throw Exception('Image file is required and must exist');
+    }
+
+
+    // إنشاء الـ FormData
+    FormData data = FormData.fromMap({
+      'CarType_Name': statusName,
+      'CarType_Img': await MultipartFile.fromFile(imageFile.path, filename: imageFile.uri.pathSegments.last),
+    });
+
+    var headers = {
+      'Authorization': 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NjQ1MDl9.EZAbLTCraQiDDHZOINro6trS1VCN4f4oow7QKqzHnuo'
+    };
+
+    var dio = Dio();
+
     try {
-      String filePath = imageFile.path;
-
-      // تحقق من امتداد الصورة
-      bool isValidExtension = filePath.toLowerCase().endsWith('.jpg') ||
-          filePath.toLowerCase().endsWith('.jpeg') ||
-          filePath.toLowerCase().endsWith('.png') ||
-          filePath.toLowerCase().endsWith('.gif');
-
-      if (!isValidExtension) {
-        print("❌ Invalid image extension");
-        throw Exception('Only JPEG, PNG, and GIF images are allowed.');
-      }
-
-      // تحقق من وجود الملف
-      if (!await imageFile.exists()) {
-        print("❌ Image file does not exist");
-        throw Exception("Image file does not exist");
-      }
-
-      // var data = FormData.fromMap({
-      //   'CarType_Img': await MultipartFile.fromFile(filePath),
-      //   'CarType_Name': statusName,
-      // });
-        FormData data = FormData.fromMap({
-     //   'CarType_Img': await MultipartFile.fromFile(filePath),
-        'CarType_Name': statusName,
-
-        "CarType_Img": (imageFile!=null)?await MultipartFile.fromFile(
-          imageFile.path,
-          filename: imageFile.path.split('/').last,
-        ):"",
-      });
-
-      var response = await DioHelper.post(
-        'CarType/Add-CarType',
-        headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjBhMjRhNDYwLWVkOTUtNGJkMC04YWQxLTYxMTU0NTFlYWI1NCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjMyOTgyNzh9.fT4wS_gq6KJWUO2ukRAmdNMMlPdcTWz-d8wP44uEgNE',
-        },
+      // إرسال البيانات عبر POST
+      var response = await dio.post(
+        'http://mobilecartracking.uat.toq.sa/api/CarType/Add-CarType',
         data: data,
+        options: Options(
+          headers: headers,
+        ),
       );
 
+      // التحقق من حالة الاستجابة
       if (response.statusCode == 200) {
-        print('✅ Success: ${response.data}');
-        return response.data['message'];
+        print('Success: ${response.data}');
       } else {
-        print('❌ Error: ${response.statusMessage}');
-        throw Exception('Failed to add car type');
+        print('Failed: ${response.data}');
       }
     } catch (e) {
-      print('❗ Exception: $e');
-      throw Exception('Unexpected error: $e');
+      print('Error: $e');
     }
   }
 
@@ -231,6 +261,8 @@ class SettingsApiService {
       throw Exception('Unexpected error: $e');
     }
   }
+
+
 
 //////////////////////////////City Block //////////////////////////////////////////////
 
@@ -288,6 +320,44 @@ class SettingsApiService {
       return message;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'dashBoard data Failed');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<String> editBranch(
+      String branchId,
+      String branchName,
+      int allowed_Space,
+      double Lat,
+      double long,
+      String nameOFLocation,
+      String cityId,
+      ) async {
+    try {
+      final response = await DioHelper.put(
+        'Branch/Update-Branch',
+        data: {
+          "id": branchId,
+          "branch_Name": branchName,
+          "allowed_Space": allowed_Space,
+          "lat": Lat,
+          "long": long,
+          "nameOfLocation": nameOFLocation,
+          "city_Id": cityId
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+          'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+        },
+      );
+
+      final String message = response.data["message"];
+
+      return message;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'branch updated  Failed');
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }

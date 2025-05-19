@@ -32,47 +32,56 @@ void CustomAddTypeBottomSheet(BuildContext context) {
             child: StatefulBuilder(
               builder: (context, setState) {
 
-                Future<void> _pickImage(ImageSource source) async {
-                  final XFile? pickedFile =
-                      await _picker.pickImage(source: source);
-                  if (pickedFile != null) {
-                    setState(() {
-                      selectedImage = File(pickedFile.path);
-                      print(selectedImage);
-                    });
+                Future<File?> _pickImage(ImageSource source) async {
+                  try {
+                    final pickedFile = await _picker.pickImage(
+                      source: source,
+                    );
+                    if (pickedFile != null) {
+                      return File(pickedFile.path); // حفظ الصورة المختارة
+                    } else {
+                      print("No image selected.");
+                      return null; // إذا لم يتم اختيار صورة
+                    }
+                  } catch (e) {
+                    print("Error picking image: $e");
+                    return null;
                   }
                 }
 
-                void _showImagePickerOptions() {
-                  showModalBottomSheet(
+                void _showPickerDialog(BuildContext context) {
+                  showDialog(
                     context: context,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    builder: (_) => Wrap(
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.photo_library),
-                          title: Text('اختر من المعرض'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            _pickImage(ImageSource.gallery);
-                          },
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("selectSource"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.camera),
+                              title: Text('pick_image'),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                selectedImage = await _pickImage(ImageSource.camera);
+                                setState(() {});
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.photo_library),
+                              title: Text('select_from_galary'),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                selectedImage = await _pickImage(ImageSource.gallery);
+                                setState(() {});
+                              },
+                            ),
+                          ],
                         ),
-                        ListTile(
-                          leading: Icon(Icons.camera_alt),
-                          title: Text('التقط صورة'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            _pickImage(ImageSource.camera);
-                          },
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 }
-
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -131,7 +140,8 @@ void CustomAddTypeBottomSheet(BuildContext context) {
                               iconColor: Colors.blue,
                               btnTextColor: Colors.blue,
                               ontap: () {
-                                _showImagePickerOptions();
+                                _showPickerDialog(context);
+
                               },
                               btnheight: 40,
                               btnHorzontalWidth: 0,

@@ -1,5 +1,6 @@
 import 'package:car_tracking/features/Maps/MapScreen.dart';
 import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
+import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
 import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
 import 'package:car_tracking/presentation/screens/MapScreen/map.dart';
 import 'package:flutter/material.dart';
@@ -8,19 +9,29 @@ import 'package:car_tracking/presentation/widgets/CustomDropDownList.dart';
 import 'package:car_tracking/presentation/widgets/CustomTextFormField.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void CustomAddBranchBottomSheet(BuildContext context) {
-  TextEditingController branchController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
-  TextEditingController rangeController = TextEditingController();
+void CustomAddBranchBottomSheet(
+    BuildContext context, {
+      BranchModel? branch, // null معناها إضافة، مش null معناها تعديل
+    }) {
+  final bool isEditMode = branch != null;
   final settingsCubit = BlocProvider.of<settingCubit>(context);
-  List<CityModel> CityList = settingsCubit.citiesList;
-  CityModel? selectedCity;
-  String? selectedId;
-  List<String> cities = ['Cairo', 'Alex', 'Giza'];
-  //int? selectedCity;
+  final List<CityModel> CityList = settingsCubit.citiesList;
 
-  double? lat;
-  double? lng;
+  CityModel? selectedCity = isEditMode
+      ? CityList.firstWhere((c) => c.id == branch!.id, orElse: () => CityList.first)
+      : null;
+  String? selectedId = selectedCity?.id;
+
+  TextEditingController branchController =
+  TextEditingController(text: isEditMode ? branch!.branchName : '');
+  TextEditingController locationController =
+  TextEditingController(text: isEditMode ? branch!.nameOfLocation : '');
+  TextEditingController rangeController = TextEditingController(
+      text: isEditMode ? branch!.allowedSpace.toString() : '');
+
+  dynamic? lat = isEditMode ? branch!.lat : null;
+  dynamic? lng = isEditMode ? branch!.long : null;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   showModalBottomSheet(
@@ -59,7 +70,7 @@ void CustomAddBranchBottomSheet(BuildContext context) {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Add Branch",
+                              isEditMode ? "Edit Branch" : "Add Branch",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             ),
@@ -69,7 +80,7 @@ void CustomAddBranchBottomSheet(BuildContext context) {
                               hintText: 'Branch Name',
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'enter City Name ';
+                                  return 'Enter branch name';
                                 }
                                 return null;
                               },
@@ -83,32 +94,34 @@ void CustomAddBranchBottomSheet(BuildContext context) {
                               onChanged: (city) {
                                 setState(() {
                                   selectedCity = city;
-                                  selectedId = city?.id; // هنا نخزن الايدي
+                                  selectedId = city?.id;
                                 });
                               },
                             ),
                             SizedBox(height: 12),
                             CustomTextField(
-                                controller: locationController,
-                                hintText: 'Branch Location',
-                                readOnly: true,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'enter City Name ';
-                                  }
-                                  return null;
-                                }),
+                              controller: locationController,
+                              hintText: 'Branch Location',
+                              readOnly: true,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Enter location';
+                                }
+                                return null;
+                              },
+                            ),
                             SizedBox(height: 12),
                             CustomTextField(
-                                controller: rangeController,
-                                hintText: 'Allowed Range',
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'enter Allowed Range ';
-                                  }
-                                  return null;
-                                }),
+                              controller: rangeController,
+                              hintText: 'Allowed Range',
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Enter allowed range';
+                                }
+                                return null;
+                              },
+                            ),
                             SizedBox(height: 12),
                             GestureDetector(
                               onTap: () async {
@@ -129,7 +142,7 @@ void CustomAddBranchBottomSheet(BuildContext context) {
                               child: Container(
                                 width: double.infinity,
                                 height:
-                                    MediaQuery.sizeOf(context).height * 0.15,
+                                MediaQuery.sizeOf(context).height * 0.15,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
@@ -151,7 +164,7 @@ void CustomAddBranchBottomSheet(BuildContext context) {
                                     },
                                     child: Container(
                                       padding:
-                                          EdgeInsets.symmetric(vertical: 14),
+                                      EdgeInsets.symmetric(vertical: 14),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
@@ -170,44 +183,50 @@ void CustomAddBranchBottomSheet(BuildContext context) {
                                   child: GestureDetector(
                                     onTap: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        await BlocProvider.of<settingCubit>(
-                                                context)
-                                            .addBranch(
-                                                branchController.text,
-                                                int.parse(rangeController.text),
-                                                lat ?? 0,
-                                                lng ?? 0,
-                                                locationController.text,
-                                                selectedId ?? "");
+                                        if (isEditMode) {
+                                          await settingsCubit.editBranch(
+                                            branch!.id,
+                                            branchController.text,
+                                            int.parse(rangeController.text),
+                                            lat?.toDouble() ?? 0,
+                                            lng?.toDouble()?? 0,
+                                            locationController.text,
+                                            selectedId ?? "",
+                                          );
+                                        } else {
+                                          await settingsCubit.addBranch(
+                                            branchController.text,
+                                            int.parse(rangeController.text),
+                                            lat ?? 0,
+                                            lng ?? 0,
+                                            locationController.text,
+                                            selectedId ?? "",
+                                          );
+                                        }
+
                                         branchController.clear();
                                         rangeController.clear();
-
                                         locationController.clear();
 
-                                        // await BlocProvider.of<settingCubit>(
-                                        //         context)
-                                        //     .getCities();
-                                        Navigator.pop(
-                                            context); // يقفل الشييت بعد الفلترة
+                                        Navigator.pop(context);
                                       } else {
-                                        // لو التواريخ مش موجودة، ممكن تظهر رسالة تنبيه للمستخدم
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                           content:
-                                              Text('Please senter Status Name'),
+                                          Text('Please fill all fields'),
                                         ));
                                       }
                                     },
                                     child: Container(
                                       padding:
-                                          EdgeInsets.symmetric(vertical: 14),
+                                      EdgeInsets.symmetric(vertical: 14),
                                       decoration: BoxDecoration(
                                         color: Color(0xff167AD8),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Add',
+                                        isEditMode ? 'Update' : 'Add',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -229,3 +248,4 @@ void CustomAddBranchBottomSheet(BuildContext context) {
     },
   );
 }
+

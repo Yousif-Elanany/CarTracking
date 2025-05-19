@@ -250,4 +250,31 @@ class SettingRepository {
       rethrow;
     }
   }
+
+
+  Future<String> editBranch(
+      String branchId,
+
+      String branchName,
+      int allowedSpace,
+      double lat,
+      double long,
+      String nameOFLocation,
+      String cityId,
+      ) async {
+    try {
+      final data = await apiService.editBranch(
+        branchId,
+        branchName,
+        allowedSpace,
+        lat,
+        long,
+        nameOFLocation,
+        cityId,
+      );
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
