@@ -433,4 +433,28 @@ class settingCubit extends Cubit<settingState> {
       emit(EditUserDetailFailure(e.toString()));
     }
   }
+
+  Future<String>? editUserRole(
+    String id,
+    List<String> roles,
+    List<Map<String, String>> carList,
+    List<Map<String, String>> branchList,
+  ) {
+    emit(EditUserDetailLoading());
+    try {
+      settingrepository
+          .editUserRole(
+        id,
+        roles,
+        carList,
+        branchList,
+      )
+          .then((userDetail) {
+        emit(EditUserDetailSuccess(userDetail));
+        settingrepository.getUsers();
+      });
+    } catch (e) {
+      emit(EditUserDetailFailure(e.toString()));
+    }
+  }
 }

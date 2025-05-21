@@ -331,4 +331,23 @@ class SettingRepository {
       rethrow;
     }
   }
+
+  Future<String> editUserRole(
+    String id,
+    List<String> roles,
+    List<Map<String, String>> carList,
+    List<Map<String, String>> branchList,
+  ) async {
+    try {
+      final data = await apiService.editUserRole(
+        id,
+        roles,
+        carList,
+        branchList,
+      );
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -320,3 +320,15 @@ class EditUserDetailFailure extends settingState {
   final String error;
   EditUserDetailFailure(this.error);
 }
+
+class EditUserRoleLoading extends settingState {}
+
+class EditUserRoleSuccess extends settingState {
+  final String massege;
+  EditUserRoleSuccess(this.massege);
+}
+
+class EditUserRoleFailure extends settingState {
+  final String error;
+  EditUserRoleFailure(this.error);
+}

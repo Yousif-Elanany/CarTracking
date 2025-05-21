@@ -113,18 +113,45 @@ void CustomAddUserBottomSheet(BuildContext context, {UsersModel? userModel}) {
                                     ? GestureDetector(
                                         onTap: () async {
                                           if (isEditDetail) {
-                                            await BlocProvider.of<settingCubit>(
-                                                    context)
-                                                .editUserDetail(
-                                              userModel.id,
-                                              nameController.text,
-                                              emailController.text,
-                                              phoneController.text,
-                                              isActive,
-                                            );
+                                 try{
+                                   await BlocProvider.of<settingCubit>(
+                                       context)
+                                       .editUserDetail(
+                                     userModel.id,
+                                     nameController.text,
+                                     emailController.text,
+                                     phoneController.text,
+                                     isActive,
+                                   );
+                                   Navigator.pop(context);
+
+                                 }   catch (e){
+                                   Navigator.pop(context);
+                                   ScaffoldMessenger.of(context)
+                                       .showSnackBar(SnackBar(
+                                     content: Text("جدث خطأ ! حاول مرة اخري"),
+                                   ));
+                                 }
                                           } else {
-                                            print("when in user perminsion");
-                                          }
+                                            try{
+                                              await BlocProvider.of<settingCubit>(
+                                                  context)
+                                                  .editUserRole(
+                                                userModel.id,
+                                                  userRoles,
+                                                  selectedCarsResults,
+                                                  selectedBranchesResults
+                                              );
+                                              Navigator.pop(context);
+
+                                            }   catch (e){
+                                              Navigator.pop(context);
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content: Text("جدث خطأ ! حاول مرة اخري"),
+                                              ));
+                                            }                                          }
                                         },
                                         child: Container(
                                           width:

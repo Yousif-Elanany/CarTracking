@@ -630,32 +630,31 @@ class SettingsApiService {
 
       return message;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'branch updated  Failed');
+      throw Exception(e.response?.data ?? 'branch updated  Failed');
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }
   }
+
   Future<String> editUserRole(
-      String id,
-      String userName,
-      String email,
-      String phoneNumber,
-      bool userActivation,
-      ) async {
+    String id,
+    List<String> roles,
+    List<Map<String, String>> carList,
+    List<Map<String, String>> branchList,
+  ) async {
     try {
       final response = await DioHelper.put(
-        'User/Update-User-Details',
+        'User/Update-User-Role',
         data: {
           "id": id,
-          "userName": userName,
-          "email": email,
-          "phoneNumber": phoneNumber,
-          "userActivation": userActivation
+          "roles": roles,
+          "getAllCarDtos": carList,
+          "getAllBranchsDto": branchList
         },
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-          'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
         },
       );
 
@@ -663,7 +662,7 @@ class SettingsApiService {
 
       return message;
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'branch updated  Failed');
+      throw Exception(e.response?.data ?? 'branch updated  Failed');
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }

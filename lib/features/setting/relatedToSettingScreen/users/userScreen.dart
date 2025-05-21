@@ -42,6 +42,9 @@ class _usersPageState extends State<usersPage> {
             if (state is EditUserDetailSuccess) {
               BlocProvider.of<settingCubit>(context).getUsers();
             }
+            if (state is EditUserRoleSuccess) {
+              BlocProvider.of<settingCubit>(context).getUsers();
+            }
           },
           builder: (context, state) {
             return Stack(
@@ -131,7 +134,7 @@ class _usersPageState extends State<usersPage> {
                                 padding: const EdgeInsets.all(4),
                                 itemCount: UsersList.length,
                                 separatorBuilder: (context, index) =>
-                                   const SizedBox(height: 24),
+                                    const SizedBox(height: 24),
                                 itemBuilder: (context, index) {
                                   return userCardWidget(
                                     Model: UsersList[index],
