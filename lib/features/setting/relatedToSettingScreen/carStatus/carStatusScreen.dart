@@ -40,6 +40,9 @@ class _carStatusPageState extends State<carStatusPage> {
             if (state is deleteStatusSuccess) {
               BlocProvider.of<settingCubit>(context).getCarStatus();
             }
+            if (state is EditStatusSuccess) {
+              BlocProvider.of<settingCubit>(context).getCarStatus();
+            }
           },
           builder: (context, state) {
             return Stack(

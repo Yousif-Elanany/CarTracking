@@ -1,6 +1,7 @@
 import 'package:car_tracking/features/auth/data/Models/userModel.dart';
 import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
 import 'package:car_tracking/features/setting/data/Models/userModel.dart';
+import 'package:car_tracking/features/setting/widgets/addUserBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
@@ -161,7 +162,11 @@ class userCardWidget extends StatelessWidget {
                   iconColor: Colors.blue,
                   btnheight: 35,
                   btnTextColor: Colors.blue,
-                  ontap: () {},
+                  ontap: () {
+
+                    CustomAddUserBottomSheet(context,userModel:Model );
+
+                  },
                 ),
                 SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
                 customSelectButton(

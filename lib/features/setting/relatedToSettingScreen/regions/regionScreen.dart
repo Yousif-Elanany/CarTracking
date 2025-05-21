@@ -38,6 +38,9 @@ class _regionPageState extends State<regionPage> {
             if (state is deleteRegionSuccess) {
               BlocProvider.of<settingCubit>(context).getRegions();
             }
+            if (state is EditRegionSuccess) {
+              BlocProvider.of<settingCubit>(context).getRegions();
+            }
           },
           builder: (context, state) {
             return Stack(

@@ -1,4 +1,6 @@
 import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
+import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
+import 'package:car_tracking/features/setting/data/Models/regionModel.dart';
 import 'package:car_tracking/features/setting/widgets/colorPicker.dart';
 import 'package:car_tracking/presentation/screens/MapScreen/PolyganMapScreen.dart';
 import 'package:car_tracking/presentation/widgets/toggleBtn.dart';
@@ -9,15 +11,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/Models/cityModel.dart';
 
-void CustomAddRefionBottomSheet(BuildContext context) {
-  TextEditingController regionController = TextEditingController();
-  TextEditingController coordinatesController = TextEditingController();
+void CustomAddRefionBottomSheet(BuildContext context,
+    {RegionModel? RegionModel}) {
+  final bool isEditMode = RegionModel != null;
 
-  TextEditingController minimumStayController = TextEditingController();
-  TextEditingController nameOfLocationController = TextEditingController();
+  final TextEditingController regionController =
+      TextEditingController(text: isEditMode ? RegionModel?.regionName : "");
+  final TextEditingController coordinatesController =
+      TextEditingController(text: isEditMode ? RegionModel?.coordinates : "");
+  final TextEditingController minimumStayController = TextEditingController(
+      text: isEditMode ? RegionModel?.minStayCount.toString() : "");
+  final TextEditingController nameOfLocationController = TextEditingController(
+      text: isEditMode ? RegionModel?.nameOfLocation : "");
   dynamic coordinates;
   final List<String> titles = ['Details', 'User permissions'];
-  CityModel? selectedCity;
+  //CityModel? selectedCity;
   String? selectedCityId;
   List<String> cities = ['Cairo', 'Alex', 'Giza'];
   // String? selectedCity;
@@ -29,13 +37,20 @@ void CustomAddRefionBottomSheet(BuildContext context) {
         .map((value) => value.toString())
         .join(',');
   }
+
   String Coordinates = "";
   double? lat;
   double? lng;
-  bool isAlert = true; // true => صح, false => خطأ
+  bool isAlert = isEditMode
+      ? RegionModel.isAlert
+          ? true
+          : false
+      : true;
   int selectedIndex = 0;
   List<CityModel> CityList = settingsCubit.citiesList;
-
+  CityModel? selectedCity = isEditMode
+      ? CityList.firstWhere((c) => c.id == RegionModel!.id, orElse: () => CityList.first)
+      : null;
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -74,7 +89,7 @@ void CustomAddRefionBottomSheet(BuildContext context) {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Add user",
+                              isEditMode ? "Edit Region" : "Add Region",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             ),
@@ -98,6 +113,7 @@ void CustomAddRefionBottomSheet(BuildContext context) {
                             SizedBox(height: 6),
                             CustomTextField(
                               controller: nameOfLocationController,
+                              readOnly: true,
                               hintText: 'Name of Location',
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -123,8 +139,9 @@ void CustomAddRefionBottomSheet(BuildContext context) {
                                   coordinates = result;
                                   //      coordinatesController.text=coordinates;
                                   //         coordinatesController=result;
-                                  Coordinates =         coordinatesToString(coordinates);
-                                  coordinatesController.text=Coordinates;
+                                  Coordinates =
+                                      coordinatesToString(coordinates);
+                                  coordinatesController.text = Coordinates;
                                   print("///////////////////////");
                                   print("object:$coordinates");
                                   print("///////////////////////");
@@ -200,7 +217,9 @@ void CustomAddRefionBottomSheet(BuildContext context) {
                               hint: 'Select City',
                               value: selectedCity,
                               items: CityList,
-                              itemAsString: (city) => city.cityName,
+                              itemAsString: (city) => isEditMode
+                                  ? RegionModel.cityName
+                                  : city.cityName,
                               onChanged: (city) {
                                 setState(() {
                                   selectedCity = city;
@@ -238,16 +257,33 @@ void CustomAddRefionBottomSheet(BuildContext context) {
                                   child: GestureDetector(
                                     onTap: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        await BlocProvider.of<settingCubit>(
-                                                context)
-                                            .addRegion(
-                                                regionController.text,
-                                            Coordinates,
-                                                nameOfLocationController.text,
-                                                isAlert,
-                                                int.parse(
-                                                    minimumStayController.text),
-                                                selectedCityId!);
+                                        if (isEditMode) {
+                                          await BlocProvider.of<settingCubit>(
+                                                  context)
+                                              .editRegion(
+                                                  RegionModel.id,
+                                                  regionController.text,
+                                                  Coordinates,
+                                                  nameOfLocationController.text,
+                                                  isAlert,
+                                                  int.parse(
+                                                      minimumStayController
+                                                          .text),
+                                                  selectedCityId!);
+                                        } else {
+                                          await BlocProvider.of<settingCubit>(
+                                                  context)
+                                              .addRegion(
+                                                  regionController.text,
+                                                  Coordinates,
+                                                  nameOfLocationController.text,
+                                                  isAlert,
+                                                  int.parse(
+                                                      minimumStayController
+                                                          .text),
+                                                  selectedCityId!);
+                                        }
+
                                         regionController.clear();
                                         nameOfLocationController.clear();
 
@@ -273,7 +309,7 @@ void CustomAddRefionBottomSheet(BuildContext context) {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Add',
+                                        isEditMode ? 'Edit' : 'Add',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),

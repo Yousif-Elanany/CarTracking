@@ -10,7 +10,7 @@ import 'package:car_tracking/features/setting/data/Models/regionModel.dart';
 import 'package:car_tracking/features/setting/data/Models/userModel.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
+import 'package:http_parser/http_parser.dart'; // مهم لتحديد نوع الملف
 
 class SettingsApiService {
   // Future<Map<String, dynamic>> getStatiscs() async {
@@ -96,6 +96,28 @@ class SettingsApiService {
     }
   }
 
+  Future<String> editCarStatus(String id, String statusName) async {
+    try {
+      final response = await DioHelper.put(
+        'CarStatus/Update-CarStatus',
+        data: {"id": id, "carStatus_Name": statusName},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+        },
+      );
+
+      final String message = response.data["message"];
+
+      return message;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'dashBoard data Failed');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+////////////////////////////////statusBlock//////////////////////////////
   // Future<String> addCarType(String statusName, File? imageFile) async {
   //   try {
   //     if (imageFile == null) {
@@ -182,27 +204,32 @@ class SettingsApiService {
       throw Exception('Image file is required and must exist');
     }
 
-
-    // إنشاء الـ FormData
+    String extension = imageFile.path.split('.').last.toLowerCase();
+    String contentType = extension == 'jpg' || extension == 'jpeg'
+        ? 'jpeg'
+        : extension == 'png'
+            ? 'png'
+            : extension == 'gif'
+                ? 'gif'
+                : 'jpeg'; // افتراضي
     FormData data = FormData.fromMap({
+      'CarType_Img': await MultipartFile.fromFile(
+        imageFile.path,
+        filename: imageFile.path.split('/').last,
+        contentType: MediaType('image', contentType), // تحديد نوع الصورة
+      ),
       'CarType_Name': statusName,
-      'CarType_Img': await MultipartFile.fromFile(imageFile.path, filename: imageFile.uri.pathSegments.last),
     });
-
-    var headers = {
-      'Authorization': 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NjQ1MDl9.EZAbLTCraQiDDHZOINro6trS1VCN4f4oow7QKqzHnuo'
-    };
-
-    var dio = Dio();
 
     try {
       // إرسال البيانات عبر POST
-      var response = await dio.post(
-        'http://mobilecartracking.uat.toq.sa/api/CarType/Add-CarType',
+      final response = await DioHelper.post(
+        'CarType/Add-CarType',
         data: data,
-        options: Options(
-          headers: headers,
-        ),
+        headers: {
+          'Authorization':
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NjQ1MDl9.EZAbLTCraQiDDHZOINro6trS1VCN4f4oow7QKqzHnuo'
+        },
       );
 
       // التحقق من حالة الاستجابة
@@ -262,7 +289,31 @@ class SettingsApiService {
     }
   }
 
+  Future<String> editCity(String id, String cityName, String cityCode) async {
+    try {
+      final response = await DioHelper.put(
+        'City/Update-City',
+        data: {
+          "id": id,
+          "city_Name": cityName,
+          "city_Code": cityCode,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+        },
+      );
 
+      final String message = response.data["message"];
+
+      return message;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'dashBoard data Failed');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
 
 //////////////////////////////City Block //////////////////////////////////////////////
 
@@ -326,14 +377,14 @@ class SettingsApiService {
   }
 
   Future<String> editBranch(
-      String branchId,
-      String branchName,
-      int allowed_Space,
-      double Lat,
-      double long,
-      String nameOFLocation,
-      String cityId,
-      ) async {
+    String branchId,
+    String branchName,
+    int allowed_Space,
+    double Lat,
+    double long,
+    String nameOFLocation,
+    String cityId,
+  ) async {
     try {
       final response = await DioHelper.put(
         'Branch/Update-Branch',
@@ -349,7 +400,7 @@ class SettingsApiService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-          'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
         },
       );
 
@@ -408,6 +459,7 @@ class SettingsApiService {
       throw Exception('Unexpected error: $e');
     }
   }
+//////////////////////////////Region Block //////////////////////////////////////////////
 
   Future<String> addRegion(
     String regionName,
@@ -441,6 +493,45 @@ class SettingsApiService {
       return message;
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'dashBoard data Failed');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<String> editRegion(
+    String regionId,
+    String regionName,
+    String coordinates,
+    String nameOfLocation,
+    bool isAlert,
+    int minStayCount,
+    String cityId,
+  ) async {
+    try {
+      final response = await DioHelper.put(
+        'Region/Update-Region',
+        data: {
+          "id": regionId,
+          "region_Name": regionName,
+          "coordinates": "LINESTRING($coordinates)",
+          "nameOfLocation": nameOfLocation,
+          "isAlert": isAlert,
+          "colorCode": "#Dbb511",
+          "minStayCount": minStayCount,
+          "city_Id": cityId
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+        },
+      );
+
+      final String message = response.data["message"];
+
+      return message;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'branch updated  Failed');
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }
@@ -511,6 +602,41 @@ class SettingsApiService {
     }
   }
 
+  Future<String> editUserDetail(
+    String id,
+    String userName,
+    String email,
+    String phoneNumber,
+    bool userActivation,
+  ) async {
+    try {
+      final response = await DioHelper.put(
+        'User/Update-User-Details',
+        data: {
+          "id": id,
+          "userName": userName,
+          "email": email,
+          "phoneNumber": phoneNumber,
+          "userActivation": userActivation
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImE5OWZkZWYxLWRhOTQtNGY1OS04ZDMyLWJlZTQ0MDUyZjNjZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImFkbWluQENhclRyYWNrZXIuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3NjI5NTYwMjJ9.HGp7sWGN9mk_ZiQmL3x5fNzvV0YnOzZKCXsOPKjYfbE',
+        },
+      );
+
+      final String message = response.data;
+
+      return message;
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'branch updated  Failed');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+///////////////user block ///////////////
   Future<String> addCar(
     String carName,
     String carPlate,

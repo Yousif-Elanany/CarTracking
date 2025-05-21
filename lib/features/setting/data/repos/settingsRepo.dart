@@ -41,9 +41,9 @@ class SettingRepository {
     }
   }
 
-  addCarType(String statusName, File? imageFile) async {
+  addCarType(String carTypeName, File? imageFile) async {
     try {
-      final data = await apiService.addCarType(statusName, imageFile!);
+      final data = await apiService.addCarType(carTypeName, imageFile!);
       print(data);
     } catch (e) {
       rethrow;
@@ -251,26 +251,80 @@ class SettingRepository {
     }
   }
 
-
   Future<String> editBranch(
       String branchId,
-
       String branchName,
       int allowedSpace,
       double lat,
       double long,
       String nameOFLocation,
-      String cityId,
-      ) async {
+      String cityId) async {
     try {
-      final data = await apiService.editBranch(
-        branchId,
-        branchName,
-        allowedSpace,
-        lat,
-        long,
-        nameOFLocation,
+      final data = await apiService.editBranch(branchId, branchName,
+          allowedSpace, lat, long, nameOFLocation, cityId);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> editCity(String id, String cityName, String cityCode) async {
+    try {
+      final data = await apiService.editCity(id, cityName, cityCode);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> editStatus(String id, String statusName) async {
+    try {
+      final data = await apiService.editCarStatus(id, statusName);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> editRegion(
+    String regionId,
+    String regionName,
+    String coordinates,
+    String nameOfLocation,
+    bool isAlert,
+    int minStayCount,
+    String cityId,
+  ) async {
+    try {
+      final data = await apiService.editRegion(
+        regionId,
+        regionName,
+        coordinates,
+        nameOfLocation,
+        isAlert,
+        minStayCount,
         cityId,
+      );
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> editUserDetail(
+    String id,
+    String userName,
+    String email,
+    String phoneNumber,
+    bool userActivation,
+  ) async {
+    try {
+      final data = await apiService.editUserDetail(
+        id,
+        userName,
+        email,
+        phoneNumber,
+        userActivation,
       );
       return data;
     } catch (e) {

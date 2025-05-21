@@ -1,11 +1,17 @@
 import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
+import 'package:car_tracking/features/setting/data/Models/carStatus.dart';
 import 'package:car_tracking/presentation/widgets/CustomBtn.dart';
 import 'package:car_tracking/presentation/widgets/CustomTextFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void CustomAddStatusBottomSheet(BuildContext context) {
-  TextEditingController StatusController = TextEditingController();
+void CustomAddStatusBottomSheet(BuildContext context,
+    {CarStatusModel? statusmodel}) {
+  final bool isEditMode = statusmodel != null;
+
+//  TextEditingController StatusController = TextEditingController();
+  final TextEditingController StatusController =
+      TextEditingController(text: isEditMode ? statusmodel?.carStatusName : "");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final settingsCubit = BlocProvider.of<settingCubit>(context);
@@ -41,11 +47,11 @@ void CustomAddStatusBottomSheet(BuildContext context) {
                     Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
-                          mainAxisSize: MainAxisSize
-                              .min, // مهم عشان الشيت ما ياخدش كل الشاشة
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // مهم عشان الشيت ما ياخدش كل الشاشة
                           children: [
                             Text(
-                              "Add Status",
+                              !isEditMode ? "Add Status" : "Edit Status",
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -92,9 +98,18 @@ void CustomAddStatusBottomSheet(BuildContext context) {
                                   child: GestureDetector(
                                     onTap: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        BlocProvider.of<settingCubit>(context)
-                                            .addCarStatus(
-                                                StatusController.text);
+                                        if (isEditMode) {
+                                          await BlocProvider.of<settingCubit>(
+                                                  context)
+                                              .editCarStatus(statusmodel.id,
+                                                  StatusController.text);
+                                        } else {
+                                          await BlocProvider.of<settingCubit>(
+                                                  context)
+                                              .addCarStatus(
+                                                  StatusController.text);
+                                        }
+
                                         StatusController.clear();
                                         Navigator.pop(
                                             context); // يقفل الشييت بعد الفلترة
@@ -116,7 +131,7 @@ void CustomAddStatusBottomSheet(BuildContext context) {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Add',
+                                        isEditMode ? "Edit" : 'Add',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),

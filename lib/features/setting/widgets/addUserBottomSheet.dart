@@ -2,6 +2,7 @@ import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart'
 import 'package:car_tracking/features/setting/data/Models/BranchModel.dart';
 import 'package:car_tracking/features/setting/data/Models/carModel.dart';
 import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
+import 'package:car_tracking/features/setting/data/Models/userModel.dart';
 import 'package:car_tracking/features/setting/relatedToSettingScreen/users/Details.dart';
 import 'package:car_tracking/features/setting/widgets/userActiveWidget.dart';
 import 'package:car_tracking/presentation/screens/MapScreen/PolyganMapScreen.dart';
@@ -17,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../relatedToSettingScreen/users/userPermision.dart';
 
-void CustomAddUserBottomSheet(BuildContext context) {
+void CustomAddUserBottomSheet(BuildContext context,{UsersModel? userModel}) {
   dynamic coordinates;
   final List<String> titles = ['Details', 'User permissions'];
   final settingsCubit = BlocProvider.of<settingCubit>(context);

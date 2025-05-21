@@ -274,3 +274,49 @@ class EditBranchFailure extends settingState {
   final String error;
   EditBranchFailure(this.error);
 }
+
+class EditCityLoading extends settingState {}
+
+class EditCitySuccess extends settingState {
+  final String massege;
+  EditCitySuccess(this.massege);
+}
+
+class EditCityFailure extends settingState {
+  final String error;
+  EditCityFailure(this.error);
+}
+
+class EdiStatusLoading extends settingState {}
+
+class EditStatusSuccess extends settingState {
+  final String massege;
+  EditStatusSuccess(this.massege);
+}
+
+class EdiStatusFailure extends settingState {
+  final String error;
+  EdiStatusFailure(this.error);
+}
+class EditRegionLoading extends settingState {}
+
+class EditRegionSuccess extends settingState {
+  final String massege;
+  EditRegionSuccess(this.massege);
+}
+
+class EditRegionFailure extends settingState {
+  final String error;
+  EditRegionFailure(this.error);
+}
+class EditUserDetailLoading extends settingState {}
+
+class EditUserDetailSuccess extends settingState {
+  final String massege;
+  EditUserDetailSuccess(this.massege);
+}
+
+class EditUserDetailFailure extends settingState {
+  final String error;
+  EditUserDetailFailure(this.error);
+}

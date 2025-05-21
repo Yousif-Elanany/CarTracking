@@ -40,6 +40,9 @@ class _branchPageState extends State<branchPage> {
             if (state is deleteBranchSuccess) {
               BlocProvider.of<settingCubit>(context).getBranches();
             }
+            if (state is EditBranchSuccess) {
+              BlocProvider.of<settingCubit>(context).getBranches();
+            }
           },
           builder: (context, state) {
             return Stack(

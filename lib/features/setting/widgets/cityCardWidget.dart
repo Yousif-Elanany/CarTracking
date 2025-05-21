@@ -1,5 +1,6 @@
 import 'package:car_tracking/features/setting/business_logic/setting_cubit.dart';
 import 'package:car_tracking/features/setting/data/Models/cityModel.dart';
+import 'package:car_tracking/features/setting/widgets/customAddCityBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
@@ -116,6 +117,7 @@ class _cityCardWidgetState extends State<cityCardWidget> {
                     iconColor: Colors.blue,
                     btnTextColor: Colors.blue,
                     ontap: () {
+                      CustomAddCityBottomSheet(context,city: widget.model);
 
 
                     },

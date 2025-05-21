@@ -15,33 +15,28 @@ class carTrackerScreenPage extends StatefulWidget {
 }
 
 class _carTrackerScreenPageState extends State<carTrackerScreenPage> {
-  List<CarTrackerModel> carsList=[];
-
-
+  List<CarTrackerModel> carsList = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    carsList=  BlocProvider.of<dashBoardCubit>(context).getcarTrackers();
-
-
+    carsList = BlocProvider.of<dashBoardCubit>(context).getcarTrackers();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
         body: BlocConsumer<dashBoardCubit, dashBoardState>(
           listener: (context, state) {
-            if (state is carTrackerSuccess){
-              carsList =state.model;
+            if (state is carTrackerSuccess) {
+              carsList = state.model;
             }
-            if (state is deleteCarSuccess){
-              carsList=  BlocProvider.of<dashBoardCubit>(context).getcarTrackers();
-
+            if (state is deleteCarSuccess) {
+              carsList =
+                  BlocProvider.of<dashBoardCubit>(context).getcarTrackers();
             }
           },
           builder: (context, state) {
@@ -130,12 +125,17 @@ class _carTrackerScreenPageState extends State<carTrackerScreenPage> {
                               height: MediaQuery.of(context).size.height * 0.68,
                               child: ListView.separated(
                                 padding: EdgeInsets.all(4),
-                                itemCount: BlocProvider.of<dashBoardCubit>(context).carTrackerList.length,
+                                itemCount:
+                                    BlocProvider.of<dashBoardCubit>(context)
+                                        .carTrackerList
+                                        .length,
                                 separatorBuilder: (context, index) =>
                                     SizedBox(height: 24),
                                 itemBuilder: (context, index) {
                                   return CarTrackerCardWidget(
-                                      model:  BlocProvider.of<dashBoardCubit>(context).carTrackerList[index]);
+                                      model: BlocProvider.of<dashBoardCubit>(
+                                              context)
+                                          .carTrackerList[index]);
                                 },
                               ),
                             ),

@@ -12,6 +12,7 @@ void CustomAddTypeBottomSheet(BuildContext context) {
   final settingsCubit = BlocProvider.of<settingCubit>(context);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   File? selectedImage;
+  File? selectedImage1;
 
   showModalBottomSheet(
     context: context,
@@ -63,7 +64,7 @@ void CustomAddTypeBottomSheet(BuildContext context) {
                               title: Text('pick_image'),
                               onTap: () async {
                                 Navigator.pop(context);
-                                selectedImage = await _pickImage(ImageSource.camera);
+                                selectedImage1 = await _pickImage(ImageSource.camera);
                                 setState(() {});
                               },
                             ),
@@ -72,7 +73,7 @@ void CustomAddTypeBottomSheet(BuildContext context) {
                               title: Text('select_from_galary'),
                               onTap: () async {
                                 Navigator.pop(context);
-                                selectedImage = await _pickImage(ImageSource.gallery);
+                                selectedImage1 = await _pickImage(ImageSource.gallery);
                                 setState(() {});
                               },
                             ),
@@ -119,11 +120,11 @@ void CustomAddTypeBottomSheet(BuildContext context) {
                             SizedBox(height: 12),
 
                             // ✅ عرض الصورة إن وجدت
-                            if (selectedImage != null)
+                            if (selectedImage1 != null)
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.file(
-                                  selectedImage!,
+                                  selectedImage1!,
                                   height: 150,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
@@ -176,16 +177,28 @@ void CustomAddTypeBottomSheet(BuildContext context) {
                                   child: GestureDetector(
                                     onTap: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        await         BlocProvider.of<settingCubit>(context)
-                                            .addCarType(
-                                            CarTypeController.text,selectedImage
-                                        );
+                                        final allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+                                        if (selectedImage1 == null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            content: Text('Please select an image'),
+                                          ));
+                                          return;
+                                        }
+
+                                        final extension = selectedImage1!.path.split('.').last.toLowerCase();
+                                        if (!allowedExtensions.contains(extension)) {
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            content: Text('Only JPEG, PNG, and GIF images are allowed'),
+                                          ));
+                                          return;
+                                        }
+
+                                        await BlocProvider.of<settingCubit>(context)
+                                            .addCarType(CarTypeController.text, selectedImage1!);
+
                                         CarTypeController.clear();
-                                        // await BlocProvider.of<settingCubit>(
-                                        //         context)
-                                        //     .getCarTypes();
-                                        Navigator.pop(
-                                            context); // يقفل الشييت بعد الفلترة
+                                        Navigator.pop(context); // يقفل الشييت بعد الفلترة
                                       } else {
                                         // لو التواريخ مش موجودة، ممكن تظهر رسالة تنبيه للمستخدم
                                         ScaffoldMessenger.of(context)

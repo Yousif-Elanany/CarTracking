@@ -6,11 +6,13 @@ import 'package:car_tracking/presentation/widgets/CustomTextFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void CustomAddCityBottomSheet(BuildContext context) {
-  TextEditingController cityCodeController = TextEditingController();
-  TextEditingController cityNameController = TextEditingController();
+void CustomAddCityBottomSheet(BuildContext context, {CityModel? city}) {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  final bool isEditMode = city != null;
+  final TextEditingController cityNameController =
+      TextEditingController(text: isEditMode ? city?.cityName : "");
+  final TextEditingController cityCodeController =
+      TextEditingController(text: isEditMode ? city?.cityCode : "");
   final settingsCubit = BlocProvider.of<settingCubit>(context);
 
   showModalBottomSheet(
@@ -50,7 +52,7 @@ void CustomAddCityBottomSheet(BuildContext context) {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Add City",
+                              !isEditMode ? "Add City" : "Edit City",
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -106,14 +108,25 @@ void CustomAddCityBottomSheet(BuildContext context) {
                                 SizedBox(width: 16),
                                 Expanded(
                                   child: GestureDetector(
-                                    onTap: () async{
+                                    onTap: () async {
                                       if (_formKey.currentState!.validate()) {
-                                     await   BlocProvider.of<settingCubit>(context)
-                                            .addCity(
-                                            cityNameController.text,cityCodeController.text);
+                                        if (isEditMode) {
+                                          await BlocProvider.of<settingCubit>(
+                                                  context)
+                                              .editCity(
+                                                  city.id,
+                                                  cityNameController.text,
+                                                  cityCodeController.text);
+                                        } else {
+                                          await BlocProvider.of<settingCubit>(
+                                                  context)
+                                              .addCity(cityNameController.text,
+                                                  cityCodeController.text);
+                                        }
+
                                         cityNameController.clear();
                                         await BlocProvider.of<settingCubit>(
-                                            context)
+                                                context)
                                             .getCities();
                                         Navigator.pop(
                                             context); // يقفل الشييت بعد الفلترة
@@ -122,9 +135,10 @@ void CustomAddCityBottomSheet(BuildContext context) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                           content:
-                                          Text('Please senter Status Name'),
+                                              Text('Please enter Status Name'),
                                         ));
-                                      }                                    },
+                                      }
+                                    },
                                     child: Container(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 14),
@@ -134,7 +148,7 @@ void CustomAddCityBottomSheet(BuildContext context) {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Add',
+                                        !isEditMode ? 'Add' : 'Edit',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),

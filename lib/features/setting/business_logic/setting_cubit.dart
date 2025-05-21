@@ -75,10 +75,10 @@ class settingCubit extends Cubit<settingState> {
     }
   }
 
-  Future<String>? addCarType(String statusName, File? imageFile) {
+  Future<String>? addCarType(String carTypeName, File? imageFile) {
     emit(addCarTypeLoading());
     try {
-      settingrepository.addCarType(statusName, imageFile).then((cars) {
+      settingrepository.addCarType(carTypeName, imageFile).then((cars) {
         emit(addCarTypeSuccess(cars));
       });
     } catch (e) {
@@ -361,10 +361,76 @@ class settingCubit extends Cubit<settingState> {
           .then((branch) {
         emit(EditBranchSuccess(branch));
         settingrepository.getBranches();
-
       });
     } catch (e) {
       emit(EditBranchFailure(e.toString()));
+    }
+  }
+
+  Future<String>? editCity(String id, String cityName, String cityCode) {
+    emit(EditCityLoading());
+    try {
+      settingrepository.editCity(id, cityName, cityCode).then((city) {
+        emit(EditCitySuccess(city));
+        settingrepository.getCities();
+      });
+    } catch (e) {
+      emit(EditCityFailure(e.toString()));
+    }
+  }
+
+  Future<String>? editCarStatus(String id, String statusName) {
+    emit(EdiStatusLoading());
+    try {
+      settingrepository.editStatus(id, statusName).then((status) {
+        emit(EditStatusSuccess(status));
+        settingrepository.getCarStatus();
+      });
+    } catch (e) {
+      emit(EdiStatusFailure(e.toString()));
+    }
+  }
+
+  Future<String>? editRegion(
+    String regionId,
+    String regionName,
+    String coordinates,
+    String nameOfLocation,
+    bool isAlert,
+    int minStayCount,
+    String cityId,
+  ) {
+    emit(EditRegionLoading());
+    try {
+      settingrepository
+          .editRegion(regionId, regionName, coordinates, nameOfLocation,
+              isAlert, minStayCount, cityId)
+          .then((region) {
+        emit(EditRegionSuccess(region));
+        settingrepository.getRegions();
+      });
+    } catch (e) {
+      emit(EditRegionFailure(e.toString()));
+    }
+  }
+
+  Future<String>? editUserDetail(
+    String id,
+    String userName,
+    String email,
+    String phoneNumber,
+    bool userActivation,
+  ) {
+    emit(EditUserDetailLoading());
+    try {
+      settingrepository
+          .editUserDetail(id, userName, email, phoneNumber, userActivation)
+          .then((userDetail) {
+        emit(EditUserDetailSuccess(userDetail));
+        settingrepository.getUsers();
+      });
+    } catch (e) {
+      emit(EditUserDetailFailure(e.toString()));
     }
   }
 }

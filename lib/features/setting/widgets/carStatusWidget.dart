@@ -1,4 +1,5 @@
 import 'package:car_tracking/features/setting/data/Models/carStatus.dart';
+import 'package:car_tracking/features/setting/widgets/customAddStatusBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,11 @@ class CarStatusCardWidget extends StatelessWidget {
                     btnheight: 40,
                     iconColor: Colors.blue,
                     btnTextColor: Colors.blue,
-                    ontap: () {},
+                    ontap: () {
+                      CustomAddStatusBottomSheet(context,statusmodel: Model);
+
+
+                    },
                   ),
                 ),
               ],

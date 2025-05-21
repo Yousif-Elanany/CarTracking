@@ -1,4 +1,5 @@
 import 'package:car_tracking/features/setting/data/Models/regionModel.dart';
+import 'package:car_tracking/features/setting/widgets/customAddRegionBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/CustomBottomSheet.dart';
 import 'package:car_tracking/presentation/widgets/customSelectButton.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,16 @@ import 'package:go_router/go_router.dart';
 
 import '../business_logic/setting_cubit.dart';
 
-class regionCardWidget extends StatelessWidget {
+class regionCardWidget extends StatefulWidget {
   // final Map<String, dynamic> carData;
   RegionModel? Model;
   regionCardWidget({this.Model});
 
+  @override
+  State<regionCardWidget> createState() => _regionCardWidgetState();
+}
+
+class _regionCardWidgetState extends State<regionCardWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,7 +50,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'Region name:: '),
                   TextSpan(
-                    text: Model?.regionName ?? "",
+                    text: widget.Model?.regionName ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -66,7 +72,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'is alert:: '),
                   TextSpan(
-                    text: Model?.isAlert == true ? "yes" : "No",
+                    text: widget.Model?.isAlert == true ? "yes" : "No",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -88,7 +94,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'City: '),
                   TextSpan(
-                    text: Model?.nameOfLocation ?? "",
+                    text: widget.Model?.nameOfLocation ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -136,7 +142,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'Min Stay Count: '),
                   TextSpan(
-                    text: "${Model?.minStayCount ?? 0}",
+                    text: "${widget.Model?.minStayCount ?? 0}",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -158,7 +164,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'city name: '),
                   TextSpan(
-                    text: Model?.cityName ?? "",
+                    text: widget.Model?.cityName ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -180,7 +186,7 @@ class regionCardWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: 'city code: '),
                   TextSpan(
-                    text: Model?.cityCode ?? "",
+                    text: widget.Model?.cityCode ?? "",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -204,11 +210,11 @@ class regionCardWidget extends StatelessWidget {
                     btnTextColor: Colors.red,
                     btnheight: 35,
                     ontap: () {
-                      CustomBottomSheet(context, onTap:()async{
-                       await BlocProvider.of<settingCubit>(context).deleteRegion(Model!.id);
-                       Navigator.pop(context);
-
-                      } );
+                      CustomBottomSheet(context, onTap: () async {
+                        await BlocProvider.of<settingCubit>(context)
+                            .deleteRegion(widget.Model!.id);
+                        Navigator.pop(context);
+                      });
                     },
                   ),
                 ),
@@ -223,7 +229,10 @@ class regionCardWidget extends StatelessWidget {
                     iconColor: Colors.blue,
                     btnheight: 35,
                     btnTextColor: Colors.blue,
-                    ontap: () {},
+                    ontap: () {
+                      CustomAddRefionBottomSheet(context,
+                          RegionModel: widget.Model);
+                    },
                   ),
                 ),
               ],
