@@ -18,19 +18,36 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../relatedToSettingScreen/users/userPermision.dart';
 
-void CustomAddUserBottomSheet(BuildContext context,{UsersModel? userModel}) {
+void CustomAddUserBottomSheet(BuildContext context, {UsersModel? userModel}) {
   dynamic coordinates;
   final List<String> titles = ['Details', 'User permissions'];
   final settingsCubit = BlocProvider.of<settingCubit>(context);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isAdmin = false;
-  bool isUser = false;
-  bool isEditor = false;
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
+  final bool isEditMode = userModel != null;
+  bool isAdmin = isEditMode
+      ? userModel?.roles[0] == "Admin"
+          ? true
+          : false
+      : false;
+  bool isUser = isEditMode
+      ? userModel?.roles?.contains("Branch")
+          ? true
+          : false
+      : false;
+  bool isEditor = isEditMode
+      ? userModel?.roles?.contains("Car")
+      ? true
+      : false
+      : false;;
+  final TextEditingController nameController =
+      TextEditingController(text: isEditMode ? userModel?.userName : "");
+  final TextEditingController emailController =
+      TextEditingController(text: isEditMode ? userModel?.email : "");
+  final TextEditingController phoneController =
+      TextEditingController(text: isEditMode ? userModel?.phoneNumber : "");
   final TextEditingController passwordController = TextEditingController();
-  bool isActive = true;
+  bool isActive = isEditMode ? userModel.userActivation : true;
+  bool isEditDetail = true;
   List<CarModel> cars = BlocProvider.of<settingCubit>(context).carsList;
   List<BranchModel> branches =
       BlocProvider.of<settingCubit>(context).branchesList;
@@ -80,13 +97,58 @@ void CustomAddUserBottomSheet(BuildContext context,{UsersModel? userModel}) {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Add user",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  isEditMode ? "Edit User" : "Add user",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(),
+                                isEditMode
+                                    ? GestureDetector(
+                                        onTap: () async {
+                                          if (isEditDetail) {
+                                            await BlocProvider.of<settingCubit>(
+                                                    context)
+                                                .editUserDetail(
+                                              userModel.id,
+                                              nameController.text,
+                                              emailController.text,
+                                              phoneController.text,
+                                              isActive,
+                                            );
+                                          } else {
+                                            print("when in user perminsion");
+                                          }
+                                        },
+                                        child: Container(
+                                          width:
+                                              MediaQuery.sizeOf(context).width *
+                                                  0.2,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 14),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border:
+                                                Border.all(color: Colors.blue),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Edit ',
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
@@ -107,7 +169,9 @@ void CustomAddUserBottomSheet(BuildContext context,{UsersModel? userModel}) {
                                       onTap: () {
                                         setState(() {
                                           selectedIndex = index;
+                                          isEditDetail = !isEditDetail;
                                         });
+                                        print(isEditDetail);
                                       },
                                       child: Container(
                                         padding:
@@ -157,11 +221,14 @@ void CustomAddUserBottomSheet(BuildContext context,{UsersModel? userModel}) {
                                             hintText: 'Phone',
                                           ),
                                           const SizedBox(height: 10),
-                                          CustomTextField(
-                                            controller: passwordController,
-                                            hintText: 'Password',
-                                            obscureText: true,
-                                          ),
+                                          isEditMode
+                                              ? SizedBox()
+                                              : CustomTextField(
+                                                  controller:
+                                                      passwordController,
+                                                  hintText: 'Password',
+                                                  obscureText: true,
+                                                ),
                                           const SizedBox(height: 10),
                                           UserActivationSwitch(
                                             rightText: "User Activation",
@@ -536,59 +603,64 @@ void CustomAddUserBottomSheet(BuildContext context,{UsersModel? userModel}) {
                                   ),
                                 ),
                                 SizedBox(width: 16),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      print(
-                                          "nameController: ${nameController.text}");
-                                      print(
-                                          "emailController: ${emailController.text}");
-                                      print(
-                                          "Location: ${phoneController.text}");
-                                      print(
-                                          "Range: ${passwordController.text}");
-                                      print("isActive: $isActive");
-                                      if (_formKey.currentState!.validate()) {
-                                        await BlocProvider.of<settingCubit>(
-                                                context)
-                                            .addUser(
-                                                nameController.text,
-                                                emailController.text,
-                                                phoneController.text,
-                                                isActive,
-                                                passwordController.text,
-                                                userRoles,
-                                                selectedCarsResults,
-                                                selectedBranchesResults);
+                                !isEditMode
+                                    ? Expanded(
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            print(
+                                                "nameController: ${nameController.text}");
+                                            print(
+                                                "emailController: ${emailController.text}");
+                                            print(
+                                                "Location: ${phoneController.text}");
+                                            print(
+                                                "Range: ${passwordController.text}");
+                                            print("isActive: $isActive");
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              await BlocProvider.of<
+                                                      settingCubit>(context)
+                                                  .addUser(
+                                                      nameController.text,
+                                                      emailController.text,
+                                                      phoneController.text,
+                                                      isActive,
+                                                      passwordController.text,
+                                                      userRoles,
+                                                      selectedCarsResults,
+                                                      selectedBranchesResults);
 
-                                         Navigator.pop(
-                                             context); // يقفل الشييت بعد الفلترة
-                                      } else {
-                                        // لو التواريخ مش موجودة، ممكن تظهر رسالة تنبيه للمستخدم
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(''),
-                                        ));
-                                      }
+                                              Navigator.pop(
+                                                  context); // يقفل الشييت بعد الفلترة
+                                            } else {
+                                              // لو التواريخ مش موجودة، ممكن تظهر رسالة تنبيه للمستخدم
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                content: Text(''),
+                                              ));
+                                            }
 
-                                      //    print("Longitude: $lng");
-                                      // Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 14),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xff167AD8),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Add',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                            //    print("Longitude: $lng");
+                                            // Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 14),
+                                            decoration: BoxDecoration(
+                                              color: Color(0xff167AD8),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Add',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(),
                               ],
                             ),
                           ],

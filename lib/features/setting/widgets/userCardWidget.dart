@@ -90,7 +90,7 @@ class userCardWidget extends StatelessWidget {
                   TextSpan(text: 'Role:: '),
                   TextSpan(
                     text:
-                        '${(Model?.roles.isNotEmpty) ? (Model?.roles[0] ?? 0) : ""}',
+                        '${(Model?.roles.isNotEmpty) ? (Model?.roles?.join(', ') ?? "") : ""}',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,

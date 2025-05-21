@@ -39,6 +39,9 @@ class _usersPageState extends State<usersPage> {
             if (state is deleteUserSuccess) {
               BlocProvider.of<settingCubit>(context).getUsers();
             }
+            if (state is EditUserDetailSuccess) {
+              BlocProvider.of<settingCubit>(context).getUsers();
+            }
           },
           builder: (context, state) {
             return Stack(
